@@ -1,0 +1,51 @@
+name: Lint Code
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: /opt/hostedtoolcache/Python/3.8.18/x64/lib/python3.8/site-packages
+          key: ${{ runner.os }}-pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # jameshi16/action-python is based on microsoft/action-python but with stripped down functionality.
+      # microsoft/action-python uses a broken action (black) that breaks tests even if we don't use black
+      # so we use the fork instead
+      - name: Flake8 (compulsory adherence)
+        uses: jameshi16/action-python@main
+        with:
+          flake8: true
+
+      - name: Pylint (nice to have)
+        uses: jameshi16/action-python@main
+        with:
+          pylint: true
+
+      - name: Run mypy (nice to have)
+        uses: sasanquaneuf/mypy-github-action@releases/v1
+        with:
+          checkName: 'lint'   # NOTE: this needs to be the same as the job name
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

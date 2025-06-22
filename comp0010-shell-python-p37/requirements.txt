@@ -1,0 +1,10 @@
+nose2
+coverage
+flake8==3.8.0
+flake8-html
+junit2html
+mutmut==2.4.4
+antlr4-python3-runtime==4.13.1
+typing-extensions==4.8.0
+parameterized==0.9.0
+mypy==1.7.1
